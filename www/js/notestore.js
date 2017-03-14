@@ -1,5 +1,10 @@
 angular.module('noteApp.notestore', []).factory('noteStore', function() {
-  var notes = []
+  var notes = angular.fromJson(window.localStorage['notes'] || '[]');
+
+  function persist() {
+    window.localStorage['notes'] = angular.toJson(notes);
+  };
+
   return {
     list: function() {
       return notes;
@@ -16,12 +21,14 @@ angular.module('noteApp.notestore', []).factory('noteStore', function() {
       for (var i = 0; i < notes.length; i++) {
         if (notes[i].id === note.id) {
           notes[i] = note;
+          persist();
           return;
         }
       }
     },
     create: function(note) {
       notes.push(note);
+      persist();
     }
   };
 });
