@@ -1,6 +1,6 @@
 (function() {
 
-  var app = angular.module('noteApp', ['ionic']);
+  var app = angular.module('noteApp', ['ionic', 'noteApp.notestore']);
 
   // GLOBAL SCALE
   var notes = [
@@ -15,35 +15,32 @@
     }
   ];
 
-  function getNote(noteId) {
-    for (var i = 0; i < notes.length; i++) {
-      if (notes[i].id === noteId) {
-        return notes[i];
-      }
-    }
-    return undefined;
-  }
-
-  function updateNote(note) {
-    for (var i = 0; i < notes.length; i++) {
-      if (notes[i].id === note.id) {
-        notes[i] = note;
-        return;
-      }
-    }
-  }
-
   // CONTROLLERS
-  app.controller('listCtrl', function($scope) {
-    $scope.notes = notes;
+  app.controller('listCtrl', function($scope, noteStore) {
+    $scope.notes = noteStore.list();
   });
 
-  app.controller('editCtrl', function($scope, $state) {
+  app.controller('editCtrl', function($scope, $state, noteStore) {
 
-    $scope.note = angular.copy(getNote($state.params.noteId));
+    $scope.note = angular.copy(noteStore.get($state.params.noteId));
 
     $scope.save = function() {
-      updateNote($scope.note);
+      noteStore.update($scope.note);
+      $state.go('list');
+    };
+
+  });
+
+  app.controller('addCtrl', function($scope, $state, noteStore) {
+
+    $scope.note = {
+      id: new Date().getTime().toString(),
+      title: '',
+      description: ''
+    };
+
+    $scope.save = function() {
+      noteStore.create($scope.note);
       $state.go('list');
     };
 
@@ -58,6 +55,9 @@
     }).state('edit', {
       url: '/edit/:noteId',
       templateUrl: 'views/edit.html'
+    }).state('add', {
+      url: '/add',
+      templateUrl: 'views/add.html'
     });
 
     $urlRouterProvider.otherwise('/list');
