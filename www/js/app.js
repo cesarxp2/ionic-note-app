@@ -3,7 +3,7 @@
   var app = angular.module('noteApp', ['ionic']);
 
   // GLOBAL SCALE
-  $scope.notes = [
+  var notes = [
     {
       id: '1',
       title: 'First Note',
@@ -24,6 +24,15 @@
     return undefined;
   }
 
+  function updateNote(note) {
+    for (var i = 0; i < notes.length; i++) {
+      if (notes[i].id === note.id) {
+        notes[i] = note;
+        return;
+      }
+    }
+  }
+
   // CONTROLLERS
   app.controller('listCtrl', function($scope) {
     $scope.notes = notes;
@@ -31,7 +40,12 @@
 
   app.controller('editCtrl', function($scope, $state) {
 
-    $scope.noteId = $state.params.noteId;
+    $scope.note = angular.copy(getNote($state.params.noteId));
+
+    $scope.save = function() {
+      updateNote($scope.note);
+      $state.go('list');
+    };
 
   });
 
