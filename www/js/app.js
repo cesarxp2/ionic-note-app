@@ -18,6 +18,14 @@
   // CONTROLLERS
   app.controller('listCtrl', function($scope, noteStore) {
     $scope.notes = noteStore.list();
+
+    $scope.remove = function(noteId) {
+      noteStore.remove(noteId)
+    };
+
+    $scope.move = function(note, fromIndex, toIndex) {
+      noteStore.move(note, fromIndex, toIndex);
+    };
   });
 
   app.controller('editCtrl', function($scope, $state, noteStore) {
