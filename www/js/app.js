@@ -17,6 +17,7 @@
 
   // CONTROLLERS
   app.controller('listCtrl', function($scope, noteStore) {
+    $scope.reordering = false;
     $scope.notes = noteStore.list();
 
     $scope.remove = function(noteId) {
@@ -25,6 +26,10 @@
 
     $scope.move = function(note, fromIndex, toIndex) {
       noteStore.move(note, fromIndex, toIndex);
+    };
+
+    $scope.toggleReordering = function() {
+      $scope.reordering = !$scope.reordering;
     };
   });
 
